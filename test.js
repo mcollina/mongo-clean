@@ -15,7 +15,7 @@ function close(db, t) {
 }
 
 function cleanVerifyAndClose(db, t) {
-  clean(db, function(err) {
+  clean(db, function(err, db) {
     db.collectionNames(function(err, collections) {
       t.notOk(err, 'no error')
 
@@ -53,6 +53,17 @@ test('removes two collections', function(t) {
       db.createCollection("dummy2", function(err) {
         // clean, verify and close
         cleanVerifyAndClose(db, t);
+      })
+    })
+  })
+})
+
+test('clean using an url', function(t) {
+  getDB(function(err, db) {
+    // creates collection dummy1
+    db.createCollection("dummy3", function(err) {
+      db.close(function() {
+        cleanVerifyAndClose(url, t)
       })
     })
   })
