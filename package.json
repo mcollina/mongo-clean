@@ -1,0 +1,31 @@
+{
+  "name": "mongo-clean",
+  "version": "0.0.0",
+  "description": "Clean a Mongo database",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mcollina/mongo-clean.git"
+  },
+  "keywords": [
+    "mongodb",
+    "clean",
+    "test"
+  ],
+  "author": "Matteo Collina <hello@matteocollina.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mcollina/mongo-clean/issues"
+  },
+  "homepage": "https://github.com/mcollina/mongo-clean",
+  "devDependencies": {
+    "tap": "~0.4.8",
+    "mongodb": "~1.4.2"
+  },
+  "dependencies": {
+    "async": "~0.7.0"
+  }
+}
