@@ -7,6 +7,8 @@ function clean(db, done) {
     clientify.bind(null, db),
     function(db, cb) {
       db.collections(function(err, collections) {
+        if (err)
+          return cb(err)
 
         // do not drop system collections
         collections = collections.filter(function(coll) {
