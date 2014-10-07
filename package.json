@@ -1,6 +1,6 @@
 {
   "name": "mongo-clean",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Clean a Mongo database",
   "main": "index.js",
   "scripts": {
@@ -23,9 +23,9 @@
   "homepage": "https://github.com/mcollina/mongo-clean",
   "devDependencies": {
     "tap": "~0.4.8",
-    "mongodb": "~1.4.2"
+    "mongodb": "~1.4.18"
   },
   "dependencies": {
-    "async": "~0.7.0"
+    "async": "~0.9.0"
   }
 }
