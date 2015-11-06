@@ -1,6 +1,9 @@
 mongo-clean
 ===========
 
+[![Build
+Status](https://travis-ci.org/mcollina/mongo-clean.svg)](https://travis-ci.org/mcollina/mongo-clean)
+
 Clean all the collections in a mongo database
 
 ## Install
