@@ -1,6 +1,6 @@
 {
   "name": "mongo-clean",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Clean a Mongo database",
   "main": "index.js",
   "scripts": {
