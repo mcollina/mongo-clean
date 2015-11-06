@@ -1,5 +1,5 @@
 
-var test        = require('tap').test
+var test        = require('tape')
   , clean       = require('./')
   , MongoClient = require('mongodb').MongoClient
   , url         = "mongodb://localhost:27017/mongocleantest"
@@ -16,7 +16,7 @@ function close(db, t) {
 
 function cleanVerifyAndClose(db, t) {
   clean(db, function(err, db) {
-    db.collectionNames(function(err, collections) {
+    db.listCollections({}).toArray(function(err, collections) {
       t.notOk(err, 'no error')
 
       // there is only the system collection
@@ -30,7 +30,6 @@ function cleanVerifyAndClose(db, t) {
 test('does nothing on an empty db', function(t) {
   getDB(function(err, db) {
     clean(db, function(err) {
-      console.log(err);
       t.notOk(err, 'no error')
       close(db, t)
     })
