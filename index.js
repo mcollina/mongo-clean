@@ -1,35 +1,36 @@
+'use strict'
 
-var async       = require('async')
-  , MongoClient = require('mongodb').MongoClient
+var async = require('async')
+var MongoClient = require('mongodb').MongoClient
 
-function clean(db, done) {
+function clean (db, done) {
   async.waterfall([
     clientify.bind(null, db),
-    function(db, cb) {
-      db.collections(function(err, collections) {
-        if (err)
+    function (db, cb) {
+      db.collections(function (err, collections) {
+        if (err) {
           return cb(err)
+        }
 
         // do not drop system collections
-        collections = collections.filter(function(coll) {
+        collections = collections.filter(function (coll) {
           return coll.collectionName.indexOf('system') !== 0
         })
 
         cb(null, db, collections)
       })
     },
-    function(db, collections, cb) {
-      async.each(collections, function(coll, sinCb) {
+    function (db, collections, cb) {
+      async.each(collections, function (coll, sinCb) {
         coll.drop(sinCb)
-      }, function(err) {
+      }, function (err) {
         cb(err, db)
       })
     }
-  ], done);
+  ], done)
 }
 
-
-function clientify(db, cb) {
+function clientify (db, cb) {
   if (typeof db === 'string') {
     MongoClient.connect(db, { w: 1 }, cb)
   } else {
