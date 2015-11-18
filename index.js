@@ -4,6 +4,14 @@ var async = require('async')
 var MongoClient = require('mongodb').MongoClient
 
 function clean (db, done) {
+  cleanDb(db, null, done)
+}
+
+function cleanExclude (db, exclude, done) {
+  cleanDb(db, exclude, done)
+}
+
+function cleanDb (db, exclude, done) {
   async.waterfall([
     clientify.bind(null, db),
     function (db, cb) {
@@ -19,6 +27,18 @@ function clean (db, done) {
 
         cb(null, db, collections)
       })
+    },
+    function (db, collections, cb) {
+      if (exclude === null) {
+        cb(null, db, collections)
+      } else {
+        // do not drop excluded collections
+        collections = collections.filter(function (coll) {
+          return (exclude.indexOf(coll.collectionName) === -1)
+        })
+
+        cb(null, db, collections)
+      }
     },
     function (db, collections, cb) {
       async.each(collections, function (coll, sinCb) {
@@ -39,3 +59,4 @@ function clientify (db, cb) {
 }
 
 module.exports = clean
+module.exports.exclude = cleanExclude

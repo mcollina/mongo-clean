@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/mcollina/mongo-clean",
   "devDependencies": {
+    "lodash": "^3.10.1",
     "mongodb": "^2.0.47",
     "pre-commit": "^1.1.2",
     "standard": "^5.3.1",
