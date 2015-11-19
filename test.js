@@ -102,7 +102,7 @@ test('removes two collections on three', function (t) {
 
           // clean, verify and close
 
-          clean.exclude(db, ['dummy3'], function (err, db) {
+          clean(db, {exclude: ['dummy1', 'dummy4']}, function (err, db) {
             t.notOk(err, 'no error')
 
             db.listCollections({}).toArray(function (err, collections) {
@@ -138,7 +138,7 @@ test('removes two collections on four', function (t) {
 
             // clean, verify and close
 
-            clean.exclude(db, ['dummy1', 'dummy4'], function (err, db) {
+            clean(db, {exclude: ['dummy1', 'dummy4']}, function (err, db) {
               t.notOk(err, 'no error')
 
               db.listCollections({}).toArray(function (err, collections) {

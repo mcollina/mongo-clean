@@ -3,15 +3,13 @@
 var async = require('async')
 var MongoClient = require('mongodb').MongoClient
 
-function clean (db, done) {
-  cleanDb(db, null, done)
-}
-
-function cleanExclude (db, exclude, done) {
-  cleanDb(db, exclude, done)
-}
-
-function cleanDb (db, exclude, done) {
+function clean (db, options, done) {
+  if (arguments.length === 2) { // if only two arguments were supplied
+    if (Object.prototype.toString.call(options) === '[object Function]') {
+      done = options
+      options = null
+    }
+  }
   async.waterfall([
     clientify.bind(null, db),
     function (db, cb) {
@@ -25,20 +23,19 @@ function cleanDb (db, exclude, done) {
           return coll.collectionName.indexOf('system') !== 0
         })
 
-        cb(null, db, collections)
-      })
-    },
-    function (db, collections, cb) {
-      if (exclude === null) {
-        cb(null, db, collections)
-      } else {
-        // do not drop excluded collections
-        collections = collections.filter(function (coll) {
-          return (exclude.indexOf(coll.collectionName) === -1)
-        })
+        if (options !== null) {
+          if ('exclude' in options) {
+            // do not drop excluded collections
+            collections = collections.filter(function (coll) {
+              return (options.exclude.indexOf(coll.collectionName) === -1)
+            })
+
+            cb(null, db, collections)
+          }
+        }
 
         cb(null, db, collections)
-      }
+      })
     },
     function (db, collections, cb) {
       async.each(collections, function (coll, sinCb) {
@@ -59,4 +56,3 @@ function clientify (db, cb) {
 }
 
 module.exports = clean
-module.exports.exclude = cleanExclude
