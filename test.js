@@ -120,7 +120,7 @@ test('removes two collections on three', function (t) {
   })
 })
 
-test('removes two collections on four', function (t) {
+test('removes two collections on four connecting via url', function (t) {
   getDB(function (err, db) {
     t.notOk(err, 'no error')
 
@@ -133,18 +133,14 @@ test('removes two collections on four', function (t) {
         db.createCollection('dummy3', function (err) {
           t.notOk(err, 'no error')
 
-          db.createCollection('dummy4', function (err) {
-            t.notOk(err, 'no error')
-
-            // clean, verify and close
-
-            clean(db, {exclude: ['dummy1', 'dummy4']}, function (err, db) {
+          db.close(function () {
+            clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
               t.notOk(err, 'no error')
 
               db.listCollections({}).toArray(function (err, collections) {
                 t.notOk(err, 'no error')
 
-                // there are two collections, the system collection and dummy3
+                // there is only the system collection
                 t.equal(collections.length, 3)
 
                 close(db, t)
