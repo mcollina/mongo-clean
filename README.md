@@ -58,7 +58,7 @@ MongoClient.connect(url, { w: 1 }, function (err, db) {
 var clean = require('./')
 var url = "mongodb://localhost:27017/mongocleantest"
 
-clean(url, {exclude: ['dummy1', 'dummy2']}, ['dummy1', 'dummy2'], function (err, db) {
+clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
   // automatically does MongoClient.connect for you
   // Delete all the collections in the db except dummy1 and dummy2
 })
