@@ -44,9 +44,21 @@ Clean the db excluding a list of collections
 
 ```js
 var clean = require('./')
+var MongoClient = require('mongodb').MongoClient
 var url = "mongodb://localhost:27017/mongocleantest"
 
-clean(url, ['dummy1', 'dummy2'], function (err, db) {
+MongoClient.connect(url, { w: 1 }, function (err, db) {
+  clean.exclude(db, ['dummy1', 'dummy2'] function () {
+    // Delete all the collections in the db except dummy1 and dummy2
+  })
+})
+```
+
+```js
+var clean = require('./')
+var url = "mongodb://localhost:27017/mongocleantest"
+
+clean.exclude(url, ['dummy1', 'dummy2'], function (err, db) {
   // automatically does MongoClient.connect for you
   // Delete all the collections in the db except dummy1 and dummy2
 })
