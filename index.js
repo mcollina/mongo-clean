@@ -4,10 +4,15 @@ var async = require('async')
 var MongoClient = require('mongodb').MongoClient
 
 function clean (db, options, done) {
+  var exclude = []
   if (arguments.length === 2) { // if only two arguments were supplied
-    if (Object.prototype.toString.call(options) === '[object Function]') {
+    if (typeof options === 'function') {
       done = options
       options = null
+    }
+  } else {
+    if ('exclude' in options) {
+      exclude = options.exclude
     }
   }
   async.waterfall([
@@ -20,19 +25,8 @@ function clean (db, options, done) {
 
         // do not drop system collections
         collections = collections.filter(function (coll) {
-          return coll.collectionName.indexOf('system') !== 0
+          return (coll.collectionName.indexOf('system') !== 0 && exclude.indexOf(coll.collectionName) === -1)
         })
-
-        if (options !== null) {
-          if ('exclude' in options) {
-            // do not drop excluded collections
-            collections = collections.filter(function (coll) {
-              return (options.exclude.indexOf(coll.collectionName) === -1)
-            })
-
-            cb(null, db, collections)
-          }
-        }
 
         cb(null, db, collections)
       })
