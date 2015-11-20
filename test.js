@@ -86,3 +86,69 @@ test('clean using an url', function (t) {
     })
   })
 })
+
+test('removes two collections on three', function (t) {
+  getDB(function (err, db) {
+    t.notOk(err, 'no error')
+
+    db.createCollection('dummy1', function (err) {
+      t.notOk(err, 'no error')
+
+      db.createCollection('dummy2', function (err) {
+        t.notOk(err, 'no error')
+
+        db.createCollection('dummy3', function (err) {
+          t.notOk(err, 'no error')
+
+          // clean, verify and close
+
+          clean(db, {exclude: ['dummy1', 'dummy4']}, function (err, db) {
+            t.notOk(err, 'no error')
+
+            db.listCollections({}).toArray(function (err, collections) {
+              t.notOk(err, 'no error')
+
+              // there are two collections, the system collection and dummy3
+              t.equal(collections.length, 2)
+
+              close(db, t)
+            })
+          })
+        })
+      })
+    })
+  })
+})
+
+test('removes two collections on four connecting via url', function (t) {
+  getDB(function (err, db) {
+    t.notOk(err, 'no error')
+
+    db.createCollection('dummy1', function (err) {
+      t.notOk(err, 'no error')
+
+      db.createCollection('dummy2', function (err) {
+        t.notOk(err, 'no error')
+
+        db.createCollection('dummy3', function (err) {
+          t.notOk(err, 'no error')
+
+          db.close(function () {
+            clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
+              t.notOk(err, 'no error')
+
+              db.listCollections({}).toArray(function (err, collections) {
+                t.notOk(err, 'no error')
+
+                // there is only the system collection
+                t.equal(collections.length, 3)
+
+                close(db, t)
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+})
