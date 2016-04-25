@@ -64,6 +64,17 @@ clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
 })
 ```
 
+Removing all elements instead of dropping the collections:
+
+```js
+var clean = require('./')
+var url = "mongodb://localhost:27017/mongocleantest"
+
+clean(url, { action: 'remove' }, function (err, db) {
+  // automatically removes all the data from all the collections in the db
+})
+```
+
 ## License
 
 MIT
