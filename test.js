@@ -1,9 +1,12 @@
 'use strict'
 
 var test = require('tape')
+var semver = require('semver')
 var clean = require('./')
 var MongoClient = require('mongodb').MongoClient
 var url = 'mongodb://localhost:27017/mongocleantest'
+
+var baseCount = !process.env.MONGODB_VERSION || semver.satisfies(process.env.MONGODB_VERSION, '>= 3.2.0') ? 0 : 1
 
 function getDB (cb) {
   MongoClient.connect(url, { w: 1 }, cb)
@@ -22,7 +25,7 @@ function cleanVerifyAndClose (db, t) {
     db.listCollections({}).toArray(function (err, collections) {
       t.notOk(err, 'no error')
 
-      t.equal(collections.length, 0)
+      t.equal(collections.length, baseCount + 0)
 
       close(db, t)
     })
@@ -107,7 +110,7 @@ test('removes two collections on three', function (t) {
             db.listCollections({}).toArray(function (err, collections) {
               t.notOk(err, 'no error')
 
-              t.equal(collections.length, 1)
+              t.equal(collections.length, baseCount + 1)
 
               close(db, t)
             })
@@ -138,7 +141,7 @@ test('removes two collections on four connecting via url', function (t) {
               db.listCollections({}).toArray(function (err, collections) {
                 t.notOk(err, 'no error')
 
-                t.equal(collections.length, 2)
+                t.equal(collections.length, baseCount + 2)
 
                 close(db, t)
               })
@@ -164,7 +167,7 @@ test('removes all the content from a collection', function (t) {
             t.error(err)
             db.listCollections({}).toArray(function (err, collections) {
               t.error(err)
-              t.equal(collections.length, 1)
+              t.equal(collections.length, baseCount + 1)
               coll.find().count(function (err, count) {
                 t.error(err)
                 t.equal(count, 0, 'no elements in the collection')
