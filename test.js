@@ -22,8 +22,7 @@ function cleanVerifyAndClose (db, t) {
     db.listCollections({}).toArray(function (err, collections) {
       t.notOk(err, 'no error')
 
-      // there is only the system collection
-      t.equal(collections.length, 1)
+      t.equal(collections.length, 0)
 
       close(db, t)
     })
@@ -108,8 +107,7 @@ test('removes two collections on three', function (t) {
             db.listCollections({}).toArray(function (err, collections) {
               t.notOk(err, 'no error')
 
-              // there are two collections, the system collection and dummy3
-              t.equal(collections.length, 2)
+              t.equal(collections.length, 1)
 
               close(db, t)
             })
@@ -140,9 +138,36 @@ test('removes two collections on four connecting via url', function (t) {
               db.listCollections({}).toArray(function (err, collections) {
                 t.notOk(err, 'no error')
 
-                // there is only the system collection
-                t.equal(collections.length, 3)
+                t.equal(collections.length, 2)
 
+                close(db, t)
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+})
+
+test('removes all the content from a collection', function (t) {
+  getDB(function (err, db) {
+    t.notOk(err, 'no error')
+
+    clean(db, function (err, db) {
+      t.error(err)
+      db.createCollection('aaa', function (err, coll) {
+        t.error(err)
+        coll.insert({ a: 42 }, function (err) {
+          t.error(err)
+          clean(db, { action: 'remove' }, function (err, db) {
+            t.error(err)
+            db.listCollections({}).toArray(function (err, collections) {
+              t.error(err)
+              t.equal(collections.length, 1)
+              coll.find().count(function (err, count) {
+                t.error(err)
+                t.equal(count, 0, 'no elements in the collection')
                 close(db, t)
               })
             })

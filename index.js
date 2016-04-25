@@ -1,6 +1,6 @@
 'use strict'
 
-var async = require('async')
+var steed = require('steed')()
 var MongoClient = require('mongodb').MongoClient
 
 function clean (db, options, done) {
@@ -8,14 +8,15 @@ function clean (db, options, done) {
   if (arguments.length === 2) { // if only two arguments were supplied
     if (typeof options === 'function') {
       done = options
-      options = null
+      options = {}
     }
   } else {
     if ('exclude' in options) {
       exclude = options.exclude
     }
   }
-  async.waterfall([
+  var action = options.action || 'drop'
+  steed.waterfall([
     clientify.bind(null, db),
     function (db, cb) {
       db.collections(function (err, collections) {
@@ -32,8 +33,8 @@ function clean (db, options, done) {
       })
     },
     function (db, collections, cb) {
-      async.each(collections, function (coll, sinCb) {
-        coll.drop(sinCb)
+      steed.each(collections, function (coll, sinCb) {
+        coll[action](sinCb)
       }, function (err) {
         cb(err, db)
       })
