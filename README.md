@@ -17,7 +17,7 @@ npm install mongo-clean --save-dev
 Reusing the same client:
 
 ```js
-var clean = require('./')
+var clean = require('mongo-clean')
 var MongoClient = require('mongodb').MongoClient
 var url = "mongodb://localhost:27017/mongocleantest"
 
