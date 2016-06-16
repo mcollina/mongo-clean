@@ -31,7 +31,7 @@ MongoClient.connect(url, { w: 1 }, function (err, db) {
 Creating a new client:
 
 ```js
-var clean = require('./')
+var clean = require('mongo-clean')
 var url = "mongodb://localhost:27017/mongocleantest"
 
 clean(url, function (err, db) {
@@ -43,7 +43,7 @@ clean(url, function (err, db) {
 Clean the db excluding a list of collections
 
 ```js
-var clean = require('./')
+var clean = require('mongo-clean')
 var MongoClient = require('mongodb').MongoClient
 var url = "mongodb://localhost:27017/mongocleantest"
 
@@ -55,7 +55,7 @@ MongoClient.connect(url, { w: 1 }, function (err, db) {
 ```
 
 ```js
-var clean = require('./')
+var clean = require('mongo-clean')
 var url = "mongodb://localhost:27017/mongocleantest"
 
 clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
@@ -67,7 +67,7 @@ clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
 Removing all elements instead of dropping the collections:
 
 ```js
-var clean = require('./')
+var clean = require('mongo-clean')
 var url = "mongodb://localhost:27017/mongocleantest"
 
 clean(url, { action: 'remove' }, function (err, db) {
