@@ -4,6 +4,7 @@ const steed = require('steed')()
 
 function clean (db, options, done) {
   var exclude = []
+  options = options || {}
   if (arguments.length === 2) { // if only two arguments were supplied
     if (typeof options === 'function') {
       done = options
@@ -13,6 +14,13 @@ function clean (db, options, done) {
     if ('exclude' in options) {
       exclude = options.exclude
     }
+  }
+  if (typeof done !== 'function') {
+    return new Promise((resolve, reject) => {
+      clean(db, options, (err, db) => {
+        err ? reject(err) : resolve(db)
+      })
+    })
   }
   var action = options.action || 'drop'
   steed.waterfall([

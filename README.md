@@ -56,6 +56,19 @@ MongoClient.connect(url, { w: 1 }, function (err, client) {
 })
 ```
 
+Promises and *async await* are supported as well.
+```js
+var clean = require('mongo-clean')
+var MongoClient = require('mongodb').MongoClient
+var url = "mongodb://localhost:27017"
+
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'))
+    .then(console.log)
+    .catch(console.log)
+})
+```
+
 ## License
 
 MIT

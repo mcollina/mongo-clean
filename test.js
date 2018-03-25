@@ -134,3 +134,40 @@ test('removes all the content from a collection', function (t) {
     })
   })
 })
+
+test('does nothing on an empty db (with promises)', function (t) {
+  getDB(function (err, client, db) {
+    t.notOk(err, 'no error')
+
+    clean(db)
+      .then(db => close(client, t))
+      .catch(err => {
+        t.error(err)
+        close(client, t)
+      })
+  })
+})
+
+test('removes a collection (with promises)', function (t) {
+  getDB(function (err, client, db) {
+    t.notOk(err, 'no error')
+
+    // creates collection dummy1
+    db.createCollection('dummy1', function (err) {
+      t.notOk(err, 'no error')
+
+      clean(db)
+        .then(db => {
+          db.listCollections({}).toArray(function (err, collections) {
+            t.notOk(err, 'no error')
+            t.equal(collections.length, baseCount + 0)
+            close(client, t)
+          })
+        })
+        .catch(err => {
+          t.error(err)
+          close(client, t)
+        })
+    })
+  })
+})
