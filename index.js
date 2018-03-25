@@ -1,7 +1,8 @@
 'use strict'
 
-var steed = require('steed')()
-var MongoClient = require('mongodb').MongoClient
+const urlModule = require('url')
+const steed = require('steed')()
+const MongoClient = require('mongodb').MongoClient
 
 function clean (db, options, done) {
   var exclude = []
@@ -18,7 +19,7 @@ function clean (db, options, done) {
   var action = options.action || 'drop'
   steed.waterfall([
     clientify.bind(null, db),
-    function (db, cb) {
+    function (db, client, cb) {
       db.collections(function (err, collections) {
         if (err) {
           return cb(err)
@@ -29,14 +30,14 @@ function clean (db, options, done) {
           return (coll.collectionName.indexOf('system') !== 0 && exclude.indexOf(coll.collectionName) === -1)
         })
 
-        cb(null, db, collections)
+        cb(null, db, client, collections)
       })
     },
-    function (db, collections, cb) {
+    function (db, client, collections, cb) {
       steed.each(collections, function (coll, sinCb) {
         coll[action](sinCb)
       }, function (err) {
-        cb(err, db)
+        cb(err, db, client)
       })
     }
   ], done)
@@ -44,9 +45,14 @@ function clean (db, options, done) {
 
 function clientify (db, cb) {
   if (typeof db === 'string') {
-    MongoClient.connect(db, { w: 1 }, cb)
+    const urlParsed = urlModule.parse(db)
+    const databaseName = urlParsed.pathname ? urlParsed.pathname.substr(1) : null
+    MongoClient.connect(db, { w: 1 }, (err, client) => {
+      if (err) return cb(err, null)
+      cb(null, client.db(databaseName), client)
+    })
   } else {
-    cb(null, db)
+    cb(null, db, null)
   }
 }
 
