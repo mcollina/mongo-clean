@@ -4,6 +4,7 @@
   "description": "Clean a Mongo database",
   "main": "index.js",
   "scripts": {
+    "mongo": "docker run --rm -p 27017:27017 mongo:3.6",
     "test": "standard && tape test.js | tap-spec"
   },
   "precommit": "test",
@@ -23,12 +24,12 @@
   },
   "homepage": "https://github.com/mcollina/mongo-clean",
   "devDependencies": {
-    "mongodb": "^2.0.47",
-    "pre-commit": "^1.1.2",
-    "semver": "^5.1.0",
-    "standard": "^5.3.1",
-    "tap-spec": "^4.1.0",
-    "tape": "^4.2.0"
+    "mongodb": "^3.0.5",
+    "pre-commit": "^1.2.2",
+    "semver": "^5.5.0",
+    "standard": "^11.0.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.9.0"
   },
   "dependencies": {
     "steed": "^1.1.3"
