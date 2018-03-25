@@ -4,7 +4,7 @@ var test = require('tape')
 var semver = require('semver')
 var clean = require('./')
 var MongoClient = require('mongodb').MongoClient
-var url = 'mongodb://localhost:27017/mongocleantest'
+var url = 'mongodb://localhost:27017'
 
 var baseCount = !process.env.MONGODB_VERSION || semver.satisfies(process.env.MONGODB_VERSION, '>= 3.2.0') ? 0 : 1
 
@@ -22,20 +22,13 @@ function close (client, t) {
 }
 
 function cleanVerifyAndClose (client, db, t) {
-  clean(db, function (err, cleanDb, cleanClient) {
+  clean(db, function (err) {
     t.notOk(err, 'no error')
 
-    var dbSwap = typeof db === 'string' ? cleanDb : db
-    dbSwap.listCollections({}).toArray(function (err, collections) {
+    db.listCollections({}).toArray(function (err, collections) {
       t.notOk(err, 'no error')
-
       t.equal(collections.length, baseCount + 0)
-
-      if (typeof db === 'string') {
-        close(cleanClient, t)
-      } else {
-        close(client, t)
-      }
+      close(client, t)
     })
   })
 }
@@ -82,21 +75,6 @@ test('removes two collections', function (t) {
   })
 })
 
-test('clean using an url', function (t) {
-  getDB(function (err, client, db) {
-    t.notOk(err, 'no error')
-
-    // creates collection dummy1
-    db.createCollection('dummy3', function (err) {
-      t.notOk(err, 'no error')
-
-      client.close(function () {
-        cleanVerifyAndClose(client, url, t)
-      })
-    })
-  })
-})
-
 test('removes two collections on three', function (t) {
   getDB(function (err, client, db) {
     t.notOk(err, 'no error')
@@ -121,38 +99,6 @@ test('removes two collections on three', function (t) {
               t.equal(collections.length, baseCount + 1)
 
               close(client, t)
-            })
-          })
-        })
-      })
-    })
-  })
-})
-
-test('removes two collections on four connecting via url', function (t) {
-  getDB(function (err, client, db) {
-    t.notOk(err, 'no error')
-
-    db.createCollection('dummy1', function (err) {
-      t.notOk(err, 'no error')
-
-      db.createCollection('dummy2', function (err) {
-        t.notOk(err, 'no error')
-
-        db.createCollection('dummy3', function (err) {
-          t.notOk(err, 'no error')
-
-          client.close(function () {
-            clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, cleanDb, cleanClient) {
-              t.notOk(err, 'no error')
-
-              cleanDb.listCollections({}).toArray(function (err, collections) {
-                t.notOk(err, 'no error')
-
-                t.equal(collections.length, baseCount + 2)
-
-                close(cleanClient, t)
-              })
             })
           })
         })

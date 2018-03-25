@@ -1,8 +1,6 @@
 'use strict'
 
-const urlModule = require('url')
 const steed = require('steed')()
-const MongoClient = require('mongodb').MongoClient
 
 function clean (db, options, done) {
   var exclude = []
@@ -18,8 +16,7 @@ function clean (db, options, done) {
   }
   var action = options.action || 'drop'
   steed.waterfall([
-    clientify.bind(null, db),
-    function (db, client, cb) {
+    function (cb) {
       db.collections(function (err, collections) {
         if (err) {
           return cb(err)
@@ -30,30 +27,17 @@ function clean (db, options, done) {
           return (coll.collectionName.indexOf('system') !== 0 && exclude.indexOf(coll.collectionName) === -1)
         })
 
-        cb(null, db, client, collections)
+        cb(null, db, collections)
       })
     },
-    function (db, client, collections, cb) {
+    function (db, collections, cb) {
       steed.each(collections, function (coll, sinCb) {
         coll[action](sinCb)
       }, function (err) {
-        cb(err, db, client)
+        cb(err, db)
       })
     }
   ], done)
-}
-
-function clientify (db, cb) {
-  if (typeof db === 'string') {
-    const urlParsed = urlModule.parse(db)
-    const databaseName = urlParsed.pathname ? urlParsed.pathname.substr(1) : null
-    MongoClient.connect(db, { w: 1 }, (err, client) => {
-      if (err) return cb(err, null)
-      cb(null, client.db(databaseName), client)
-    })
-  } else {
-    cb(null, db, null)
-  }
 }
 
 module.exports = clean
