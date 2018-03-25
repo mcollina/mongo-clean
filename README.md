@@ -21,8 +21,8 @@ var clean = require('mongo-clean')
 var MongoClient = require('mongodb').MongoClient
 var url = "mongodb://localhost:27017/mongocleantest"
 
-MongoClient.connect(url, { w: 1 }, function (err, db) {
-  clean(db, function () {
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'), function (err) {
     // your db is clean!
   })
 })
@@ -34,7 +34,7 @@ Creating a new client:
 var clean = require('mongo-clean')
 var url = "mongodb://localhost:27017/mongocleantest"
 
-clean(url, function (err, db) {
+clean(url, function (err, db, client) {
   // automatically does MongoClient.connect for you
   // your db is clean!
 })
@@ -47,8 +47,8 @@ var clean = require('mongo-clean')
 var MongoClient = require('mongodb').MongoClient
 var url = "mongodb://localhost:27017/mongocleantest"
 
-MongoClient.connect(url, { w: 1 }, function (err, db) {
-  clean(db, {exclude: ['dummy1', 'dummy2']}, function () {
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'), {exclude: ['dummy1', 'dummy2']}, function () {
     // Delete all the collections in the db except dummy1 and dummy2
   })
 })
@@ -58,7 +58,7 @@ MongoClient.connect(url, { w: 1 }, function (err, db) {
 var clean = require('mongo-clean')
 var url = "mongodb://localhost:27017/mongocleantest"
 
-clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
+clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db, client) {
   // automatically does MongoClient.connect for you
   // Delete all the collections in the db except dummy1 and dummy2
 })
@@ -70,7 +70,7 @@ Removing all elements instead of dropping the collections:
 var clean = require('mongo-clean')
 var url = "mongodb://localhost:27017/mongocleantest"
 
-clean(url, { action: 'remove' }, function (err, db) {
+clean(url, { action: 'remove' }, function (err, db, client) {
   // automatically removes all the data from all the collections in the db
 })
 ```
