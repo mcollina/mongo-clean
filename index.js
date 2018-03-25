@@ -1,10 +1,10 @@
 'use strict'
 
-var steed = require('steed')()
-var MongoClient = require('mongodb').MongoClient
+const steed = require('steed')()
 
 function clean (db, options, done) {
   var exclude = []
+  options = options || {}
   if (arguments.length === 2) { // if only two arguments were supplied
     if (typeof options === 'function') {
       done = options
@@ -15,10 +15,16 @@ function clean (db, options, done) {
       exclude = options.exclude
     }
   }
+  if (typeof done !== 'function') {
+    return new Promise((resolve, reject) => {
+      clean(db, options, (err, db) => {
+        err ? reject(err) : resolve(db)
+      })
+    })
+  }
   var action = options.action || 'drop'
   steed.waterfall([
-    clientify.bind(null, db),
-    function (db, cb) {
+    function (cb) {
       db.collections(function (err, collections) {
         if (err) {
           return cb(err)
@@ -40,14 +46,6 @@ function clean (db, options, done) {
       })
     }
   ], done)
-}
-
-function clientify (db, cb) {
-  if (typeof db === 'string') {
-    MongoClient.connect(db, { w: 1 }, cb)
-  } else {
-    cb(null, db)
-  }
 }
 
 module.exports = clean

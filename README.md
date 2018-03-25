@@ -14,29 +14,17 @@ npm install mongo-clean --save-dev
 
 ## Usage
 
-Reusing the same client:
+Pass the database handler to `clean`.
 
 ```js
 var clean = require('mongo-clean')
 var MongoClient = require('mongodb').MongoClient
-var url = "mongodb://localhost:27017/mongocleantest"
+var url = "mongodb://localhost:27017"
 
-MongoClient.connect(url, { w: 1 }, function (err, db) {
-  clean(db, function () {
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'), function (err) {
     // your db is clean!
   })
-})
-```
-
-Creating a new client:
-
-```js
-var clean = require('mongo-clean')
-var url = "mongodb://localhost:27017/mongocleantest"
-
-clean(url, function (err, db) {
-  // automatically does MongoClient.connect for you
-  // your db is clean!
 })
 ```
 
@@ -45,22 +33,12 @@ Clean the db excluding a list of collections
 ```js
 var clean = require('mongo-clean')
 var MongoClient = require('mongodb').MongoClient
-var url = "mongodb://localhost:27017/mongocleantest"
+var url = "mongodb://localhost:27017"
 
-MongoClient.connect(url, { w: 1 }, function (err, db) {
-  clean(db, {exclude: ['dummy1', 'dummy2']}, function () {
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'), {exclude: ['dummy1', 'dummy2']}, function (err) {
     // Delete all the collections in the db except dummy1 and dummy2
   })
-})
-```
-
-```js
-var clean = require('mongo-clean')
-var url = "mongodb://localhost:27017/mongocleantest"
-
-clean(url, {exclude: ['dummy1', 'dummy2']}, function (err, db) {
-  // automatically does MongoClient.connect for you
-  // Delete all the collections in the db except dummy1 and dummy2
 })
 ```
 
@@ -68,10 +46,26 @@ Removing all elements instead of dropping the collections:
 
 ```js
 var clean = require('mongo-clean')
-var url = "mongodb://localhost:27017/mongocleantest"
+var MongoClient = require('mongodb').MongoClient
+var url = "mongodb://localhost:27017"
 
-clean(url, { action: 'remove' }, function (err, db) {
-  // automatically removes all the data from all the collections in the db
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'), { action: 'remove' }, function (err) {
+    // automatically removes all the data from all the collections in the db
+  })
+})
+```
+
+Promises and *async await* are supported as well.
+```js
+var clean = require('mongo-clean')
+var MongoClient = require('mongodb').MongoClient
+var url = "mongodb://localhost:27017"
+
+MongoClient.connect(url, { w: 1 }, function (err, client) {
+  clean(client.db('mongocleantest'))
+    .then(console.log)
+    .catch(console.log)
 })
 ```
 
